@@ -18,6 +18,10 @@ export interface SelectConverterInputProps {
 // These converters require constructor objects that the current GUI cannot provide.
 const UNSUPPORTED_PICKER_CONVERTERS = new Set<string>(['TokenBijectionConverter'])
 
+export function filterPickerConverters(converters: ConverterGroup['converters']): ConverterGroup['converters'] {
+  return converters.filter((converter) => !UNSUPPORTED_PICKER_CONVERTERS.has(converter.converter_type))
+}
+
 export default function SelectConverterInput({ query, selectedConverterType, groupedConverters, onOptionSelect, onQueryChange }: SelectConverterInputProps) {
   const styles = useConverterPanelStyles()
 
@@ -34,9 +38,7 @@ export default function SelectConverterInput({ query, selectedConverterType, gro
         data-testid="converter-panel-select"
       >
         {groupedConverters.map((group) => {
-          const visibleConverters = group.converters.filter(
-            (converter) => !UNSUPPORTED_PICKER_CONVERTERS.has(converter.converter_type),
-          )
+          const visibleConverters = filterPickerConverters(group.converters)
           if (!visibleConverters.length) return null
 
           return (
